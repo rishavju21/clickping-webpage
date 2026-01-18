@@ -173,7 +173,7 @@ export function BrokenPathsView({ onboardingData, paths, onBack, onViewPath }: B
               </h3>
               <div className="bg-slate-50 p-4 rounded-lg border text-sm font-mono">
                 <div className="mb-3">
-                  <strong>Subject:</strong> [PathGuard] {brokenPaths.length} page{brokenPaths.length > 1 ? "s" : ""} broken on {onboardingData.domain}
+                  <strong>Subject:</strong> [ClickPing] {brokenPaths.length} page{brokenPaths.length > 1 ? "s" : ""} broken on {onboardingData.domain}
                 </div>
                 <div className="mb-3">
                   <strong>To:</strong> {onboardingData.email}

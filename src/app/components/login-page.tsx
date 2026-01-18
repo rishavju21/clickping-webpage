@@ -46,7 +46,7 @@ export function LoginPage({ onLogin, onBack }: LoginPageProps) {
           </Button>
           <div className="flex items-center gap-2">
             <Activity className="size-6 text-blue-600" />
-            <span className="font-semibold text-xl">PathGuard</span>
+            <span className="font-semibold text-xl">ClickPing</span>
           </div>
           <div className="w-20"></div> {/* Spacer for centering */}
         </div>

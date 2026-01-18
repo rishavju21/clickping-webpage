@@ -172,6 +172,7 @@ export default function App() {
           onBack={() => setCurrentView("dashboard")}
           onUpdateSettings={handleUpdateSettings}
           onManagePaths={() => setCurrentView("manage-paths")}
+          onChangePlan={() => setCurrentView("pricing")}
         />
       )}
 

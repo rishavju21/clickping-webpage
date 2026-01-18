@@ -13,9 +13,10 @@ interface SettingsPageProps {
   onBack: () => void;
   onUpdateSettings: (data: Partial<OnboardingData>) => void;
   onManagePaths: () => void;
+  onChangePlan: () => void;
 }
 
-export function SettingsPage({ onboardingData, onBack, onUpdateSettings, onManagePaths }: SettingsPageProps) {
+export function SettingsPage({ onboardingData, onBack, onUpdateSettings, onManagePaths, onChangePlan }: SettingsPageProps) {
   const getPlanDetails = (plan: string) => {
     switch (plan) {
       case "free":
@@ -85,7 +86,7 @@ export function SettingsPage({ onboardingData, onBack, onUpdateSettings, onManag
                   )}
                 </div>
               </div>
-              <Button variant="outline">
+              <Button variant="outline" onClick={onChangePlan}>
                 <CreditCard className="size-4 mr-2" />
                 Change Plan
               </Button>

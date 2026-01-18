@@ -16,7 +16,7 @@ export function LandingPage({ onGetStarted, onViewPricing, onLogin }: LandingPag
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="size-6 text-blue-600" />
-            <span className="font-semibold text-xl">PathGuard</span>
+            <span className="font-semibold text-xl">ClickPing</span>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" onClick={onViewPricing}>
@@ -279,7 +279,7 @@ export function LandingPage({ onGetStarted, onViewPricing, onLogin }: LandingPag
       {/* Footer */}
       <footer className="border-t bg-slate-50">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-slate-600">
-          <p>© 2026 PathGuard. All rights reserved.</p>
+          <p>© 2026 ClickPing. All rights reserved.</p>
         </div>
       </footer>
     </div>

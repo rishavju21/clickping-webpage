@@ -6,7 +6,7 @@ import { Label } from "@/app/components/ui/label";
 import { Alert, AlertDescription } from "@/app/components/ui/alert";
 import { Textarea } from "@/app/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
-import { ArrowLeft, CheckCircle2, Loader2, AlertCircle, Globe } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, AlertCircle, Globe, Plus, Trash2 } from "lucide-react";
 
 interface OnboardingFlowProps {
   selectedPlan: "free" | "starter" | "growth";
@@ -40,7 +40,9 @@ export function OnboardingFlow({ selectedPlan, onComplete, onBack }: OnboardingF
   const [email, setEmail] = useState("");
   const [domain, setDomain] = useState("");
   const [discoveredPaths, setDiscoveredPaths] = useState<string[]>([]);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
   const [manualPaths, setManualPaths] = useState("");
+  const [newManualPath, setNewManualPath] = useState("");
   const [frequency, setFrequency] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -138,6 +140,8 @@ export function OnboardingFlow({ selectedPlan, onComplete, onBack }: OnboardingF
       const isValid = Math.random() > 0.1; // 90% success rate
 
       if (isValid) {
+        // Initialize selectedPaths with all discovered paths
+        setSelectedPaths(discoveredPaths);
         setStep("paths");
       } else {
         setError("Homepage validation failed. Please ensure your homepage loads correctly and try again.");
@@ -156,10 +160,37 @@ export function OnboardingFlow({ selectedPlan, onComplete, onBack }: OnboardingF
     onComplete({
       email,
       domain,
-      paths: discoveredPaths,
+      paths: selectedPaths,
       frequency,
       plan: selectedPlan
     });
+  };
+
+  const handleAddManualPath = () => {
+    setError("");
+    
+    if (!newManualPath.trim()) {
+      setError("Please enter a path");
+      return;
+    }
+
+    let normalizedPath = newManualPath.trim();
+    if (!normalizedPath.startsWith("/")) {
+      normalizedPath = "/" + normalizedPath;
+    }
+
+    if (selectedPaths.includes(normalizedPath)) {
+      setError("This path is already added");
+      return;
+    }
+
+    setSelectedPaths([...selectedPaths, normalizedPath]);
+    setNewManualPath("");
+    setError("");
+  };
+
+  const handleRemovePath = (pathToRemove: string) => {
+    setSelectedPaths(selectedPaths.filter(p => p !== pathToRemove));
   };
 
   const getPlanDetails = () => {
@@ -358,44 +389,84 @@ export function OnboardingFlow({ selectedPlan, onComplete, onBack }: OnboardingF
           {/* Paths Review Step */}
           {step === "paths" && (
             <Card className="p-8">
-              <h2 className="text-2xl font-bold mb-2">Review Discovered Paths</h2>
+              <h2 className="text-2xl font-bold mb-2">Review & Add Paths</h2>
               <p className="text-slate-600 mb-6">
-                Found {discoveredPaths.length} pages {useSitemap ? "from sitemap" : "from manual input"}.
-                {discoveredPaths.length > planDetails.maxPaths && (
-                  <span className="text-orange-600 font-medium">
-                    {" "}Your plan includes {planDetails.maxPaths} pages. You'll need add-ons for the rest.
-                  </span>
-                )}
+                Found {discoveredPaths.length} pages {useSitemap ? "from sitemap" : "from manual input"}. You can add more paths manually.
               </p>
 
               <div className="space-y-4">
-                <div className="border rounded-lg max-h-64 overflow-y-auto">
-                  {discoveredPaths.map((path, index) => (
-                    <div 
-                      key={index}
-                      className={`flex items-center gap-3 p-3 border-b last:border-b-0 ${
-                        index >= planDetails.maxPaths ? "bg-orange-50" : ""
-                      }`}
-                    >
-                      <CheckCircle2 className={`size-4 flex-shrink-0 ${
-                        index >= planDetails.maxPaths ? "text-orange-500" : "text-green-600"
-                      }`} />
-                      <code className="text-sm font-mono">https://{domain}{path}</code>
-                      {index >= planDetails.maxPaths && (
-                        <span className="ml-auto text-xs text-orange-600 font-medium">
-                          Requires add-on
-                        </span>
-                      )}
-                    </div>
-                  ))}
+                {/* Add Manual Path Section */}
+                <div className="p-4 border rounded-lg bg-slate-50">
+                  <Label htmlFor="new-path" className="text-sm font-medium mb-2 block">
+                    Add More Paths
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="new-path"
+                      type="text"
+                      placeholder="/new-page"
+                      value={newManualPath}
+                      onChange={(e) => setNewManualPath(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleAddManualPath()}
+                      className="bg-white"
+                    />
+                    <Button onClick={handleAddManualPath} size="sm">
+                      <Plus className="size-4 mr-1" />
+                      Add
+                    </Button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Example: /new-feature, /products/item
+                  </p>
+                  {error && (
+                    <p className="text-xs text-red-600 mt-2">{error}</p>
+                  )}
                 </div>
 
-                {discoveredPaths.length > planDetails.maxPaths && (
+                {/* All Paths List */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <Label className="text-sm font-medium">
+                      All Paths ({selectedPaths.length})
+                    </Label>
+                    {selectedPaths.length > planDetails.maxPaths && (
+                      <span className="text-xs text-orange-600 font-medium">
+                        {selectedPaths.length - planDetails.maxPaths} require add-ons
+                      </span>
+                    )}
+                  </div>
+                  <div className="border rounded-lg max-h-80 overflow-y-auto">
+                    {selectedPaths.map((path, index) => (
+                      <div 
+                        key={index}
+                        className={`flex items-center gap-3 p-3 border-b last:border-b-0 ${index >= planDetails.maxPaths ? "bg-orange-50" : ""}`}
+                      >
+                        <CheckCircle2 className={`size-4 flex-shrink-0 ${index >= planDetails.maxPaths ? "text-orange-500" : "text-green-600"}`} />
+                        <code className="text-sm font-mono flex-1">https://{domain}{path}</code>
+                        {index >= planDetails.maxPaths && (
+                          <span className="text-xs text-orange-600 font-medium whitespace-nowrap">
+                            Add-on
+                          </span>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemovePath(path)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="size-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {selectedPaths.length > planDetails.maxPaths && (
                   <Alert>
                     <AlertCircle className="size-4" />
                     <AlertDescription>
                       Your {planDetails.name} plan includes {planDetails.maxPaths} pages. 
-                      You have {discoveredPaths.length} pages. You can add flexible page bundles 
+                      You have {selectedPaths.length} pages. You can add flexible page bundles 
                       (+10, +50, or +100 pages) without changing plans.
                     </AlertDescription>
                   </Alert>
@@ -424,18 +495,13 @@ export function OnboardingFlow({ selectedPlan, onComplete, onBack }: OnboardingF
                       <SelectValue placeholder="Select frequency" />
                     </SelectTrigger>
                     <SelectContent>
-                      {selectedPlan === "growth" && (
-                        <SelectItem value="15min">Every 15 minutes</SelectItem>
-                      )}
-                      {(selectedPlan === "starter" || selectedPlan === "growth") && (
-                        <SelectItem value="30min">Every 30 minutes</SelectItem>
-                      )}
-                      {(selectedPlan === "starter" || selectedPlan === "growth") && (
-                        <SelectItem value="1hour">Every 1 hour</SelectItem>
-                      )}
-                      {selectedPlan === "free" && (
-                        <SelectItem value="6hours">Every 6 hours</SelectItem>
-                      )}
+                      <SelectItem value="Every 15 minutes">Every 15 minutes</SelectItem>
+                      <SelectItem value="Every 30 minutes">Every 30 minutes</SelectItem>
+                      <SelectItem value="Every 1 hour">Every 1 hour</SelectItem>
+                      <SelectItem value="Every 3 hours">Every 3 hours</SelectItem>
+                      <SelectItem value="Every 6 hours">Every 6 hours</SelectItem>
+                      <SelectItem value="Every 12 hours">Every 12 hours</SelectItem>
+                      <SelectItem value="Every 1 day">Every 1 day</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

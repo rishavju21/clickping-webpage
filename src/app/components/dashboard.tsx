@@ -28,6 +28,7 @@ interface PathStatus {
   lastChecked: Date;
   httpStatus: number;
   jsErrors: number;
+  pageLoadMs: number;
   errorMessage?: string;
 }
 
@@ -63,6 +64,7 @@ export function Dashboard({
         lastChecked: new Date(Date.now() - Math.random() * 3600000), // Random time in last hour
         httpStatus: hasBrokenStatus ? (Math.random() > 0.5 ? 404 : 500) : 200,
         jsErrors: hasJsError ? Math.floor(Math.random() * 3) + 1 : 0,
+        pageLoadMs: Math.floor(Math.random() * 5000) + 1000, // Random page load time between 1000ms and 6000ms
         errorMessage: hasBrokenStatus 
           ? `HTTP ${hasBrokenStatus ? (Math.random() > 0.5 ? 404 : 500) : 200} Error`
           : hasJsError 
@@ -127,7 +129,7 @@ export function Dashboard({
           <div className="flex items-center gap-3">
             <Activity className="size-6 text-blue-600" />
             <div>
-              <h1 className="font-semibold text-lg">PathGuard</h1>
+              <h1 className="font-semibold text-lg">ClickPing</h1>
               <p className="text-xs text-slate-600">{onboardingData.domain}</p>
             </div>
           </div>
@@ -251,6 +253,7 @@ export function Dashboard({
                 <TableHead>Path</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>HTTP Code</TableHead>
+                <TableHead>Page Load</TableHead>
                 <TableHead>JS Errors</TableHead>
                 <TableHead>Last Checked</TableHead>
                 <TableHead></TableHead>
@@ -277,6 +280,11 @@ export function Dashboard({
                   <TableCell>
                     <span className={pathData.httpStatus === 200 ? "text-green-600" : "text-red-600"}>
                       {pathData.httpStatus}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className={pathData.pageLoadMs < 2000 ? "text-green-600" : pathData.pageLoadMs < 4000 ? "text-orange-600" : "text-red-600"}>
+                      {pathData.pageLoadMs}ms
                     </span>
                   </TableCell>
                   <TableCell>
@@ -307,7 +315,7 @@ export function Dashboard({
             </h3>
             <div className="bg-slate-50 p-4 rounded-lg border text-sm font-mono">
               <div className="mb-3">
-                <strong>Subject:</strong> [PathGuard] {brokenCount} page{brokenCount > 1 ? "s" : ""} broken on {onboardingData.domain}
+                <strong>Subject:</strong> [ClickPing] {brokenCount} page{brokenCount > 1 ? "s" : ""} broken on {onboardingData.domain}
               </div>
               <div className="mb-3">
                 <strong>To:</strong> {onboardingData.email}

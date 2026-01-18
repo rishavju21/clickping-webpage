@@ -355,7 +355,7 @@ export function PricingPage({ onSelectPlan, onBack }: PricingPageProps) {
       {/* Footer */}
       <footer className="border-t bg-white">
         <div className="container mx-auto px-4 py-8 text-center text-sm text-slate-600">
-          <p>© 2026 PathGuard. All rights reserved.</p>
+          <p>© 2026 ClickPing. All rights reserved.</p>
         </div>
       </footer>
     </div>
