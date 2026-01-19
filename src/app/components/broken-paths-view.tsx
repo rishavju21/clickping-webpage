@@ -164,35 +164,6 @@ export function BrokenPathsView({ onboardingData, paths, onBack, onViewPath }: B
             )}
           </Card>
 
-          {/* Email Preview */}
-          {brokenPaths.length > 0 && (
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <Bell className="size-5" />
-                Alert Email Preview
-              </h3>
-              <div className="bg-slate-50 p-4 rounded-lg border text-sm font-mono">
-                <div className="mb-3">
-                  <strong>Subject:</strong> [ClickPing] {brokenPaths.length} page{brokenPaths.length > 1 ? "s" : ""} broken on {onboardingData.domain}
-                </div>
-                <div className="mb-3">
-                  <strong>To:</strong> {onboardingData.email}
-                </div>
-                <div className="border-t pt-3 mt-3 space-y-2">
-                  <p>The following pages are broken:</p>
-                  {brokenPaths.map((p, i) => (
-                    <div key={i} className="text-red-600">
-                      • {p.path} – {p.errorMessage}
-                    </div>
-                  ))}
-                  <p className="mt-4 text-slate-600">
-                    Checked at: {new Date().toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </Card>
-          )}
-
           {/* Info Card */}
           <Card className="p-6 bg-blue-50 border-blue-200">
             <h3 className="font-semibold mb-2">How We Detect Broken Pages</h3>

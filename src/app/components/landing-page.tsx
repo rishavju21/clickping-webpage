@@ -1,6 +1,9 @@
 import { Button } from "@/app/components/ui/button";
 import { Card } from "@/app/components/ui/card";
-import { CheckCircle2, AlertCircle, Globe, Bell, Activity, Shield } from "lucide-react";
+import { CheckCircle2, AlertCircle, Globe, Bell, Activity, Shield, MessageCircle } from "lucide-react";
+import { Input } from "@/app/components/ui/input";
+import { Textarea } from "@/app/components/ui/textarea";
+import { useState } from "react";
 
 interface LandingPageProps {
   onGetStarted: () => void;
@@ -9,6 +12,25 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onGetStarted, onViewPricing, onLogin }: LandingPageProps) {
+  const [feedbackForm, setFeedbackForm] = useState({
+    name: "",
+    email: "",
+    mobile: "",
+    message: ""
+  });
+
+  const handleFeedbackSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Mock submission
+    alert("Thank you for your feedback! We'll get back to you soon.");
+    setFeedbackForm({ name: "", email: "", mobile: "", message: "" });
+  };
+
+  const handleWhatsAppClick = () => {
+    // Replace with your actual WhatsApp number
+    window.open("https://wa.me/919211949969?text=Hi, I'm interested in ClickPing", "_blank");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       {/* Header */}
@@ -275,6 +297,88 @@ export function LandingPage({ onGetStarted, onViewPricing, onLogin }: LandingPag
           </Button>
         </div>
       </section>
+
+      {/* Feedback Form Section */}
+      <section className="container mx-auto px-4 py-16 bg-slate-50">
+        <div className="max-w-2xl mx-auto">
+          <Card className="p-8">
+            <h2 className="text-2xl font-bold text-center mb-2">We'd Love to Hear From You</h2>
+            <p className="text-center text-slate-600 mb-6">
+              Share your feedback or questions and we'll get back to you soon.
+            </p>
+            <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                  Name
+                </label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Your name"
+                  value={feedbackForm.name}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                  Email
+                </label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="your.email@company.com"
+                  value={feedbackForm.email}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, email: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="mobile" className="block text-sm font-medium mb-2">
+                  Mobile Number
+                </label>
+                <Input
+                  id="mobile"
+                  type="tel"
+                  placeholder="+1 234 567 8900"
+                  value={feedbackForm.mobile}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, mobile: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="block text-sm font-medium mb-2">
+                  Message
+                </label>
+                <Textarea
+                  id="message"
+                  placeholder="Your message..."
+                  value={feedbackForm.message}
+                  onChange={(e) => setFeedbackForm({ ...feedbackForm, message: e.target.value.slice(0, 300) })}
+                  maxLength={300}
+                  rows={4}
+                  required
+                />
+                <p className="text-xs text-slate-500 mt-1">
+                  {feedbackForm.message.length}/300 characters
+                </p>
+              </div>
+              <Button type="submit" className="w-full">
+                Submit Feedback
+              </Button>
+            </form>
+          </Card>
+        </div>
+      </section>
+
+      {/* WhatsApp Floating Button */}
+      <button
+        onClick={handleWhatsAppClick}
+        className="fixed bottom-6 right-6 size-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50"
+        aria-label="Contact us on WhatsApp"
+      >
+        <MessageCircle className="size-7" />
+      </button>
 
       {/* Footer */}
       <footer className="border-t bg-slate-50">
